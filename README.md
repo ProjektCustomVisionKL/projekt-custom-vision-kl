@@ -1,5 +1,6 @@
- # PROSTA SORTOWNIA 
-Projekt zakłada rozpoznawanie i oddzielanie butelek plastikowych od butelek szklanych i puszek. Butelki szklane będą jeszcze dodatkowo sortowane pod wzgledem koloru szkła. Jest to wstępna wersja projektu zakładajacego przyszłościowe rozdzielanie wyrzucanych śmieci na wysypiskach czy w sortowniach, aby zautomatyzować pracę. Jednakże projekt możnaby także rozwinąć w stronę automatycznego barmana lub przy większej liczbie obiektów w automatycznego sprzedawcę sklepowego.
+# PROSTA SORTOWNIA
+
+Projekt zakłada rozpoznawanie i oddzielanie butelek plastikowych od butelek szklanych i puszek. Jest to wstępna wersja projektu zakładajacego przyszłościowe rozdzielanie wyrzucanych śmieci na wysypiskach czy w sortowniach, aby zautomatyzować pracę. Jednakże projekt możnaby także rozwinąć w stronę automatycznego barmana lub przy większej liczbie obiektów w automatycznego sprzedawcę sklepowego.
 
 ### ZESPÓŁ
 
@@ -8,35 +9,46 @@ Projekt zakłada rozpoznawanie i oddzielanie butelek plastikowych od butelek szk
 
 ### ZADANIA
 
-1. Porównanie - w projekcie porównane zostaną ze sobą działania serwisu Custom Vision na portalu Azure z naszym algorytmem napisanym z wykorzystaniem jezyka Python oraz conajmniej jednej z biblitek: OpenCV/TensorFlow/scikit-image. Porównana zostanie jakość abu rozwiązań, szybkosć, poniesione koszta oraz zajętość pamięciowa 
-2. Wykrywanie obiektów - wykrywanie buletek i puszek na zdjęciu 
-3. Selekcja - rozróżnienie i zetykietowanie obiektów
-4. Douczanie - do przemyślenia 
+1. Implementacja - Stworzenie systemu predykcji w Custom Vision na portalu Azure oraz stworzenie modelu wykorzystaniem jezyka Python oraz biblioteki ImageAI, która korzysta z biblioteki TensorFlow do uczenia.
+2. Oba rozwiązania zostaną porównane pod kątem jakości rozwiązania, szybkości i poniesionych kosztów.
+3. Wykrywanie obiektów - wykrywanie plastikowych (głównie butelek), szklanych i metalowych (głównie puszek) śmieci na zdjęciach.
+4. Selekcja - rozróżnienie i zetykietowanie obiektów.
 
 ### SCHEMAT
-WARIANT 1: Wynik będzie pokazywany na specjalnie stworzonej stronie internetowej, gdzie będzie można wgrać zdjęcie i uzyskać wyniki z obu rozwiązań. Z naszego algorytmu będzie można skorzystać z pomocą aplikacji napisanej z użyciem biblioteki Flask, która będzie w kontenerze Dockera. Połączenie strona - Custom Vision i strona - Docker planujemy rozwiązać z pomocą Fuction App. 
 
-WARIANT 2: Wytrenowany model z serwisu Custom Vision ściągamy, aby używac go lokalnie - używa  się go w TensorFlow.
+1. Wynik działą został udostępniony na stronie internetowej dostępnej pod adresem:
+
+   https://waste-app.azurewebsites.net/
+
+   Na stronie można wgrać zdjęcie i uzyskać wyniki z obu rozwiązań. API obsługujące model zostało zaimplementowane w języku Python z użyciem frameworku Flask, która została uruchomiiona jako WebAPP w kontenerze Dockera. Połączenie strona - Custom Vision i strona - Docker jest rozwiązane bezpośrednio w aplikacji.
+2. Wytrenowany model można także pobrać tutaj:
+
+   https://mkdlprojekt.blob.core.windows.net/files/model.h5
+
+   Aby użyć modelu można użyć dołączonego Notebooka aby sprawdzić poprawność działania - używa się do tego Tensorflow.
 
 ### ARCHITEKTURA
-Wariant 1: 
+
+1:
 
 ![Wariant 1 - sieciowy](W1.png)
 
-Wariant 2: 
+2:
 
 ![Wariant 2 - lokalny](W2.png)
 
 ### TECHNOLOGIE
-- Custom Vision Service - Azure
-- OpenCV/TensorFlow/scikit-image
-- Docker
-- App Service
 
-### PLAN 
+- Custom Vision Service - Azure
+- ImageAI z TensorFlow i OpenCV
+- Flask + Web Service z kontenerem Dockera
+- Angular + Web Service z kontenerem
+
+### PLAN
+
 1. Znalezienie zdjęć - Dawid - do 13.12
 2. Nauczenie Custom vision - Magda + Dawid - 30.12
 3. Opracowanie własnego algorytmu - Magda + Dawid - 08.01
-4. Wstępny 2 check-point do potwierdzenia - 10.01
-5. Posklejanie wszystkiego w całość + prezentacja - Magda - 16.10 
+4. Wstępny 2 check-point do potwierdzenia
+5. Posklejanie wszystkiego w całość + prezentacja
 6. Przedstawienie wyników pracy
