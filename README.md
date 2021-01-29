@@ -138,6 +138,46 @@ https://waste-app.azurewebsites.net/
 
 ### Rezultaty
 
+Azure Custom Vision przedstawia trzy wskaźniki oceny klasyfikatorów.
+
+* **Precision** - określa ile identyfikacji klasy było prawidłowych. W naszym przypadku może to być np. 100 wykryć plastiku, a tylko 65 z nich faktycznie było było poprawnych, wtedy precision wynosi 65%.
+* **Recall** - określa ile było faktycznych klasyfikacji które dodatkowo były poprawnie sklasyfikowane. W naszym przypadku może to być np. 100 zdjęć, które zostały przez nas określone jako plastik, a wykrytych jako plastik było tylko 40, wtedy recall wynosi 40%.
+* **Average precision** - jest to obszar pod krzywą precision/recall, czyli krzywej, precision do recall dla każdej z predykcji.
+
+ImageAI pozwala poznać tylko jedną z tych wartości i jest to Average precision, więc względem tej wartości głównie będzie to porównane.
+
+
+| Tag | Precision | Recall | Average precision Azure | Average precision ImageAI |
+| - | - | - | - | - |
+| glass | 76.5% | 40.6% | 48.0% | 8.5% |
+| plastic | 73.6% | 39.8% | 45.2% | 23.8% |
+| metal | 52.1% | 45.5% | 42.2% | 30.1% |
+
+Niestety, ale od razu widać, że wartości uzyskane w Azure prezentują się znacznie lepiej od tych uzyskanych przez nasz model. Wynikać to może między innymi z tego, że obliczenia na Azure, mimo że znacznie krótsze zostały wykonane na zoptymalizowanej pod kątem tego typu obliczeń maszynie i była to maszyna znacznie szybsza.
+
+Pod kątem samych surowych danych można uznać, że Custom Vision jest tutaj lepszy. Chcieliśmy zrobić porównania faktycznych zdjęć, aby zobaczyć jak działają porównania.
+
+I. Pojedynczy łatwy do wyodrębnienia obiekt.
+
+![Test 1](images/test1.jpg)
+
+Jak widać, w tym wypadku oba modele równie dobrze wykryły śmieci, czas wykrywanie także jest porównywalny, jednakże widać, że Azure zrobił to ze znacznie większą pewnoscią ~ 0.92, a nasz model tylko ~0.65.
+
+II. Kilka obiektów także z elementami, które nie były poprzednio zaznaczane gdyż skupiliśmy się głównie na butelkach
+
+![Test 2](images/test2.jpg)
+
+Widać tutaj, że elementy takie jakie celowaliśmy czyli butelki plastikowe i szklane zostały znacznie lepiej oznaczone jako śmieci konkretnego typu w przypadku Custom Viion, brak też dużych nakładających się na siebie obszarów. Jednakże, stworzony przez nas model wykrył śmieci także tam, gdzie nei było to poprzednio pokazywane - nie wszędzie oczywiście. Nie wykrył też poprawnie butelki na dole, a paczkę po papierosach sklasyfikował do najbliższej znajej etykiety - metalowi. Widać tutaj też znaczną różnicę w szybkości działania, gdzie zwycięsko wychodzi Azure.
+
+III. Duża liczba obiektów różnego typu
+
+![Test 3](images/test3.jpg)
+
+Widać tutaj podobne błedy, nie wykrywanie wszystkich obiektów, błedne tagi przy niektórych z nich. Bardzo ciężko w tym wypadku porównać który z algorytmów zadziałął lepiej jeśli chodzi o wykrywanie. Widać jednak różnicę w szybkości działania.
+
+Różnice w szybkości w większości prób mogą wiązać się z ilością dostępnej mocy obliczeniowej na maszynie Dockera, mimo wszystko jest to dość tania maszyna - koszt to tylko 12 dolarów miesięcznie. W przypadku korzystania z Azure koszt zależy głównie od ilości wykrywanych zdjęć. Custom Vision pozwala na wykrywanie do 10 000 zdjęć miesięcznie za darmo a potem, każdy 1000 kosztuje 2 dolary. Jeśli liczba wykrywanych obiektów ograniczyłaby się do 16 000 zdjęć, to Custom Vision wyszedłby taniej, powyżej tej liczby wirtualna maszyna byłaby lepsza, jednak silniejsze rozwiązania kosztują już ~70 dolarów, co wymagałoby 45 000 predykcji miesięcznie, aby cena Custom Vision była większa.
+
+Istnieje takze duża szansa, że gdyby model był dodatkowo douczony, szczególnie gdyby było to zrobione na większej ilości zdjęć to zarówno jakość Azure Custom Vision jak i naszego rozwiązania byłaby lepsza.
 
 ### Dalszy rozwój
 
@@ -149,6 +189,9 @@ Kolejnym mozliwym ulepszeniem, tym razem architektonicznym byłoby użycie Video
 
 ### Podsumowanie
 
+W projekcie mieliśmy szansę stworzyć samemu model detekcji elementów na obrazach jak i użyć rozwiązania Custom Vision, a następnie dokonać porównania. Doszliśmy do wniosku, że aby rozwiązanie działało poprawnie wymagany byłby dalszy rozwój oraz douczanie stworzonych modeli. Jeśli chodzi o koszta, to w przypadku niskiego użycia interfejsu metoda z Custom Vision jest znacznie tańsza, jednak cena szybko rośnie, jeśli wykonywanych zdjęć miałyby być tysiące.
+
+Oba rozwiązania mają swoje plusy i minusy i od zastosowania zależy to, które byłoby lepsze do dalszego rozwoju.
 
 ### Plan
 
