@@ -40,6 +40,10 @@ Projekt zakłada rozpoznawanie i oddzielanie butelek plastikowych od butelek szk
 - Flask + Web Service z kontenerem Dockera
 - Angular + Web Service z kontenerem
 
+### Wideoprezentacja
+
+[![Wideoprezentacja](images/video.jpg)](https://youtu.be/F8vM1WH7ibc)
+
 ### Instrukcje reprodukcji
 
 ---
