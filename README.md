@@ -130,7 +130,7 @@ Po zakończeniu trenowania opublikowaliśmy projekt i stał on się dostępny pr
 
 **Aplikacja pozwalająca na porównanie rozwiązań**
 
-W Angularze stworzyliśmy kolejny projekt, którego kod dostępny jest w katalogu `waste-app`. Aplkacja pozwala na wybranie zdjęcia z komputera i wysłanie go zarówno do Prediction API jak i naszego API z serwerem. Jako próg wyświetlania ustawiliśmy prawdopodobieństwo 0.4 dla Custom Vision i 0.5 dla naszego API.
+W Angularze stworzyliśmy kolejny projekt, którego kod dostępny jest w katalogu `waste-app`. Aplkacja pozwala na wybranie zdjęcia z komputera i wysłanie go zarówno do Prediction API jak i naszego API z serwerem. Jako próg wyświetlania ustawiliśmy prawdopodobieństwo 0.5 dla Custom Vision i dla naszego API.
 
 W Azure Portal stworzyliśmy kolejne Web App tym razem takie, które uruchamia kod PHP. Za pomocą połączenia FTP wgraliśmy zbudowany projekt Angularowy i jest on dostępny pod adresem:
 
@@ -141,19 +141,25 @@ https://waste-app.azurewebsites.net/
 Azure Custom Vision przedstawia trzy wskaźniki oceny klasyfikatorów.
 
 * **Precision** - określa ile identyfikacji klasy było prawidłowych. W naszym przypadku może to być np. 100 wykryć plastiku, a tylko 65 z nich faktycznie było było poprawnych, wtedy precision wynosi 65%.
+
+  P = TRUE_POSITIVE / (TRUE_POSITIVE + FALSE_POSITIVE)
 * **Recall** - określa ile było faktycznych klasyfikacji które dodatkowo były poprawnie sklasyfikowane. W naszym przypadku może to być np. 100 zdjęć, które zostały przez nas określone jako plastik, a wykrytych jako plastik było tylko 40, wtedy recall wynosi 40%.
-* **Average precision** - jest to obszar pod krzywą precision/recall, czyli krzywej, precision do recall dla każdej z predykcji.
+
+  R = TRUE_POSITIVE / (TRUE_POSITIVE + FALSE_NEGATIVE)
+* **Average precision** - jest to pole pod krzywą w wykresie precision od recall dla każdej wartości progu wykrywania obiektu (od 0 do 1).
+
+Wiecej informacji o metrykach można znaleźć w [artykule Uniwersytetu Stanford](https://cs230.stanford.edu/section/7/), gdzie jest to bardzo przystępnie opisane.
 
 ImageAI pozwala poznać tylko jedną z tych wartości i jest to Average precision, więc względem tej wartości głównie będzie to porównane.
 
 
 | Tag | Precision | Recall | Average precision Azure | Average precision ImageAI |
 | - | - | - | - | - |
-| glass | 76.5% | 40.6% | 48.0% | 8.5% |
-| plastic | 73.6% | 39.8% | 45.2% | 23.8% |
-| metal | 52.1% | 45.5% | 42.2% | 30.1% |
+| glass | 76.5% | 40.6% | 48.0% | 42.6% |
+| plastic | 73.6% | 39.8% | 45.2% | 33.9% |
+| metal | 52.1% | 45.5% | 42.2% | 41.2% |
 
-Niestety, ale od razu widać, że wartości uzyskane w Azure prezentują się znacznie lepiej od tych uzyskanych przez nasz model. Wynikać to może między innymi z tego, że obliczenia na Azure, mimo że znacznie krótsze zostały wykonane na zoptymalizowanej pod kątem tego typu obliczeń maszynie i była to maszyna znacznie szybsza.
+Niestety, ale od razu widać, że wartości uzyskane w Azure prezentują się tylko trochę lepiej od tych uzyskanych przez nasz model. Wynikać to może między innymi z tego, że obliczenia na Azure, mimo że znacznie krótsze zostały wykonane na zoptymalizowanej pod kątem tego typu obliczeń maszynie i była to maszyna znacznie szybsza.
 
 Pod kątem samych surowych danych można uznać, że Custom Vision jest tutaj lepszy. Chcieliśmy zrobić porównania faktycznych zdjęć, aby zobaczyć jak działają porównania.
 
@@ -173,7 +179,7 @@ III. Duża liczba obiektów różnego typu
 
 ![Test 3](images/test3.jpg)
 
-Widać tutaj podobne błedy, nie wykrywanie wszystkich obiektów, błedne tagi przy niektórych z nich. Bardzo ciężko w tym wypadku porównać który z algorytmów zadziałął lepiej jeśli chodzi o wykrywanie. Widać jednak różnicę w szybkości działania.
+Widać tutaj podobne błedy, nie wykrywanie wszystkich obiektów (szczególnie mało zostało wykrytych przez Custom Vision), błedne tagi przy niektórych z nich. Bardzo ciężko w tym wypadku porównać który z algorytmów zadziałął lepiej jeśli chodzi o wykrywanie - oba wypadły dość słabo. Widać jednak różnicę w szybkości działania.
 
 Różnice w szybkości w większości prób mogą wiązać się z ilością dostępnej mocy obliczeniowej na maszynie Dockera, mimo wszystko jest to dość tania maszyna - koszt to tylko 12 dolarów miesięcznie. W przypadku korzystania z Azure koszt zależy głównie od ilości wykrywanych zdjęć. Custom Vision pozwala na wykrywanie do 10 000 zdjęć miesięcznie za darmo a potem, każdy 1000 kosztuje 2 dolary. Jeśli liczba wykrywanych obiektów ograniczyłaby się do 16 000 zdjęć, to Custom Vision wyszedłby taniej, powyżej tej liczby wirtualna maszyna byłaby lepsza, jednak silniejsze rozwiązania kosztują już ~70 dolarów, co wymagałoby 45 000 predykcji miesięcznie, aby cena Custom Vision była większa.
 
@@ -181,7 +187,7 @@ Istnieje takze duża szansa, że gdyby model był dodatkowo douczony, szczególn
 
 ### Dalszy rozwój
 
-Aby ulepszyć działanie obecnej aplikacji najłatwiejszym sposobem byłoby dłuższe trenowanie modelu. Jednakże aby dobrze dobrać odpowiednie wagi dobrze byłoby także sprawić, aby ilość oznaczonych obiektów poszczególnych tagów/etykiet była podobna, czyli potrzebne byłoby dodatkowo ok. 200 oznaczeć szkla i 100 oznaczeń metalu.
+Aby ulepszyć działanie obecnej aplikacji najłatwiejszym sposobem byłoby dłuższe trenowanie modelu. Jednakże, aby model był trenowany poprawnie dobrze byłoby także sprawić, aby ilość oznaczonych obiektów poszczególnych tagów/etykiet była podobna, czyli potrzebne byłoby dodatkowo ok. 200 oznaczeć szkla i 100 oznaczeń metalu.
 
 Innym sposobem na rozbudowę byłoby dodanie kolejnych możliwych sortowań czyli papieru, biodegradowalnych rzeczy i rzeczy, które nie nadają się do recyklingu. Mając dobrej jakości zdjęcia możnaby nawet czytać odpowiednie oznaczenia na śmieciach, co pozwalałoby na dokładniejszą analizę, np. oznaczenia na workach biodegradowalnych.
 

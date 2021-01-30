@@ -43,7 +43,7 @@ export class AppComponent {
       const startTime = Date.now();
       this.predictService.sendFile(this.file).then(result => {
         this.predictionTime = ((Date.now() - startTime) / 1000).toFixed(1);
-        this.predictions = result.predictions.filter(p => p.probability > 0.4);
+        this.predictions = result.predictions.filter(p => p.probability > 0.5);
         --this.requestWaiting;
         console.log(this.predictions);
       }).catch(err => {
